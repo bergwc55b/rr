@@ -1,0 +1,73 @@
+---
+output: html_document
+---
+# Peer Assessment 1
+RF Berg
+
+```{r init,echo=FALSE}
+library(plyr)
+library(lattice)
+setwd("/Users/richardberg/r/class/rr")
+data<-read.csv("activity.csv")
+```
+```{r first,echo=FALSE}
+d1<-data[! is.na(data$steps),]
+d2<-ddply(d1,.(date),summarize,sum=sum(steps))
+```
+## What is mean total number of steps taken per day?
+```{r hist,echo=FALSE}
+hist(d2$sum,xlab="Mean Steps per Day",main="Histogram of Mean Steps")
+```
+
+```{r computetime, echo=FALSE }
+mn<-mean(d2$sum)
+md<-median(d2$sum)
+```
+The mean is `r mn` and median `r md`.
+
+
+## What is the average daily activity pattern?
+```{r timeser,echo=FALSE}
+plot.ts(d1$steps,type='l',ylab="Total Daily Steps",main="Time Series for Steps on a 5 Minute Period")
+```
+```{r maxstep,echo=FALSE}
+i1<-ddply(d1,.(interval),summarize,mean=mean(steps))
+ind<-which.max(i1$mean)
+intv<-i1$mean[ind]
+intval<-i1$interval[ind]
+```
+This time interval `r intval` has the highest mean value of `r intv`.
+
+## Imputing missing values
+```{r imput,echo=FALSE}
+m1<-data[is.na(data$steps),]
+badLen<-length(m1$steps)
+```
+The number rows of missing data is `r badLen`
+
+```{r fillin,echo=FALSE}
+goodData<-read.csv("activity.csv")
+goodData[is.na(goodData)]<-0
+gd2<-ddply(goodData,.(date),summarize,sum=sum(steps))
+hist(gd2$sum,xlab="Total Steps per Day",main="Histogram of Total Steps")
+```
+
+This shows that by changing NA to 0 changes the histogram by showing higher numbers >5000
+
+
+## Are there differences in activity patterns between weekdays and weekends?
+``` {r wends,echo=FALSE}
+wd<-weekdays(as.Date(data$date))
+wd<-gsub("Sunday","weekend",wd)
+wd<-gsub("Saturday","weekend",wd)
+wd<-gsub("Friday","weekday",wd)
+wd<-gsub("Thursday","weekday",wd)
+wd<-gsub("Wednesday","weekday",wd)
+wd<-gsub("Tuesday","weekday",wd)
+wd<-gsub("Monday","weekday",wd)
+goodData<-cbind(wd=wd,goodData)
+gd3<-ddply(goodData,.(interval,wd),summarize,sum=sum(steps))
+xyplot(sum~interval|wd,data=gd3,ylab="Mean Steps per Day")
+```
+
+There is less activity on the weekends vs weekdays
