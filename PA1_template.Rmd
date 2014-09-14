@@ -25,6 +25,7 @@ md<-median(d2$sum)
 ```
 The mean is `r mn` and median `r md`.
 
+----
 
 ## What is the average daily activity pattern?
 ```{r timeser,echo=FALSE}
@@ -37,6 +38,8 @@ intv<-i1$mean[ind]
 intval<-i1$interval[ind]
 ```
 This time interval `r intval` has the highest mean value of `r intv`.
+
+----
 
 ## Imputing missing values
 ```{r imput,echo=FALSE}
@@ -54,6 +57,7 @@ hist(gd2$sum,xlab="Total Steps per Day",main="Histogram of Total Steps")
 
 This shows that by changing NA to 0 changes the histogram by showing higher numbers >5000
 
+----
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ``` {r wends,echo=FALSE}
